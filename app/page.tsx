@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import Card from '@/app/components/Card'
+import { useState, useRef } from 'react'
+import styles from './table-styles.module.css'
 
 interface DaySchedule {
   day: string
@@ -237,6 +237,7 @@ export default function FeedingProgramPage() {
   const [cenaInfo, setCenaInfo] = useState(
     '¡OJO! Optar siempre por un alimento proteico (pollo, pescado, pavita o 4 claras de huevos) + 1 1/2 taza de verduras cocidas o crudas'
   )
+  const tableRef = useRef<HTMLDivElement>(null)
 
   const handleCellClick = (
     dayIdx: number,
@@ -296,6 +297,137 @@ export default function FeedingProgramPage() {
     }
   }
 
+  const downloadPDF = () => {
+    const pdfContainer = document.getElementById('CONTAINER-PDF-CONTENT')
+    if (!pdfContainer) return
+
+    // Create a new window for printing
+    const printWindow = window.open('', '', 'width=1200,height=800')
+    if (!printWindow) return
+
+    // Clone the container
+    const containerClone = pdfContainer.cloneNode(true) as HTMLElement
+
+    // Copy computed styles from original elements to cloned elements
+    const copyComputedStyles = (source: Element, target: Element) => {
+      if (source.nodeType === 1) {
+        // Element node
+        const computed = window.getComputedStyle(source)
+        const target_el = target as HTMLElement
+
+        // Copy important style properties
+        target_el.style.backgroundColor = computed.backgroundColor
+        target_el.style.color = computed.color
+        target_el.style.borderColor = computed.borderColor
+        target_el.style.padding = computed.padding
+        target_el.style.fontSize = computed.fontSize
+        target_el.style.fontWeight = computed.fontWeight
+        target_el.style.textAlign = computed.textAlign
+        target_el.style.border = computed.border
+      }
+
+      // Recursively copy styles for children
+      const sourceChildren = source.childNodes
+      const targetChildren = target.childNodes
+
+      for (let i = 0; i < sourceChildren.length; i++) {
+        if (
+          sourceChildren[i].nodeType === 1 &&
+          targetChildren[i]?.nodeType === 1
+        ) {
+          copyComputedStyles(
+            sourceChildren[i] as Element,
+            targetChildren[i] as Element
+          )
+        }
+      }
+    }
+
+    copyComputedStyles(pdfContainer, containerClone)
+
+    // Create the HTML content
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Plan de Alimentación Semanal</title>
+        <meta charset="UTF-8">
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+          }
+          body {
+            font-family: Arial, sans-serif;
+            padding: 8px;
+            background: white;
+          }
+          h3 {
+            text-align: center;
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            padding: 0;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 11px;
+          }
+          td, th {
+            padding: 6px;
+            border: 1px solid #333;
+          }
+          @page {
+            margin: 5px;
+            size: A4 landscape;
+          }
+          @media print {
+            html, body {
+              margin: 0;
+              padding: 5px;
+            }
+            h3 {
+              margin: 0 0 5px 0;
+              padding: 0;
+              page-break-after: avoid;
+            }
+            table {
+              page-break-inside: avoid;
+              margin: 0;
+            }
+            tr {
+              page-break-inside: avoid;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        ${containerClone.innerHTML}
+      </body>
+      </html>
+    `
+
+    // Write content to the new window
+    printWindow.document.write(htmlContent)
+    printWindow.document.close()
+
+    // Wait for content to fully render before printing
+    printWindow.onload = () => {
+      setTimeout(() => {
+        printWindow.print()
+      }, 500)
+    }
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-8">
@@ -307,117 +439,56 @@ export default function FeedingProgramPage() {
         </p>
       </div>
 
-      {/* Weekly Feeding Table */}
-      <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
-        <table className="w-full border-collapse text-sm">
-          {/* Header */}
-          <thead>
-            <tr className="bg-green-600 text-white">
-              <th className="border border-green-700 px-4 py-3 text-left font-bold w-20"></th>
-              <th className="border border-green-700 px-4 py-3 text-center font-bold">
-                DÍA 01
-              </th>
-              <th className="border border-green-700 px-4 py-3 text-center font-bold">
-                DÍA 02
-              </th>
-              <th className="border border-green-700 px-4 py-3 text-center font-bold">
-                DÍA 03
-              </th>
-              <th className="border border-green-700 px-4 py-3 text-center font-bold">
-                DÍA 04
-              </th>
-              <th className="border border-green-700 px-4 py-3 text-center font-bold">
-                DÍA 05
-              </th>
-              <th className="border border-green-700 px-4 py-3 text-center font-bold">
-                DÍA 06
-              </th>
-              <th className="border border-green-700 px-4 py-3 text-center font-bold">
-                DÍA 07
-              </th>
-            </tr>
-          </thead>
+      {/* Download PDF Button */}
+      <div className="mb-6 flex justify-end">
+        <button
+          onClick={downloadPDF}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-200"
+        >
+          📥 Descargar PDF
+        </button>
+      </div>
 
-          {/* Body */}
-          <tbody>
-            {/* EN AYUNAS */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
-                EN AYUNAS
-              </td>
-              <td
-                colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
-                onClick={() =>
-                  handleCellClick(0, 'enAyunas', schedule[0].enAyunas)
-                }
-              >
-                {editCell?.dayIdx === 0 && editCell?.field === 'enAyunas' ? (
-                  <input
-                    type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                    placeholder="Editar..."
-                    className="w-full px-2 py-1 border border-gray-400 rounded"
-                  />
-                ) : (
-                  <p className="italic text-xs md:text-sm text-center">
-                    {schedule[0].enAyunas}
-                  </p>
-                )}
-              </td>
-            </tr>
+      <div id="CONTAINER-PDF-CONTENT">
+        <h3 className="text-black text-center text-2xl mb-4">
+          DIETA PÉRDIDA DE GRASA
+        </h3>
 
-            {/* DESAYUNO */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
-                DESAYUNO
-              </td>
-              <td
-                colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-green-200 text-gray-800 cursor-pointer hover:bg-green-300 transition"
-                onClick={() =>
-                  handleCellClick(0, 'desayuno', schedule[0].desayuno)
-                }
-              >
-                {editCell?.dayIdx === 0 && editCell?.field === 'desayuno' ? (
-                  <input
-                    type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                    placeholder="Editar..."
-                    className="w-full px-2 py-1 border border-gray-400 rounded"
-                  />
-                ) : (
-                  <p className="italic text-xs md:text-sm text-center">
-                    {schedule[0].desayuno}
-                  </p>
-                )}
-              </td>
-            </tr>
+        {/* Weekly Feeding Table */}
+        <div
+          ref={tableRef}
+          className="overflow-x-auto bg-white rounded-lg shadow-lg"
+        >
+          <table className="w-full border-collapse text-sm">
+            {/* Header */}
+            <thead>
+              <tr className={styles.tableHeader}>
+                <th className={styles.tableHeaderCellFirst}></th>
+                <th className={styles.tableHeaderCell}>DÍA 01</th>
+                <th className={styles.tableHeaderCell}>DÍA 02</th>
+                <th className={styles.tableHeaderCell}>DÍA 03</th>
+                <th className={styles.tableHeaderCell}>DÍA 04</th>
+                <th className={styles.tableHeaderCell}>DÍA 05</th>
+                <th className={styles.tableHeaderCell}>DÍA 06</th>
+                <th className={styles.tableHeaderCell}>DÍA 07</th>
+              </tr>
+            </thead>
 
-            {/* 6AM A 8AM - Daily Breakfast Details */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
-                6AM A<br />
-                8AM
-              </td>
-              {schedule.map((day, idx) => (
+            {/* Body */}
+            <tbody>
+              {/* EN AYUNAS */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
+                  EN AYUNAS
+                </td>
                 <td
-                  key={idx}
-                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                  colSpan={7}
+                  className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
                   onClick={() =>
-                    handleCellClick(idx, 'mediaMañana', day.mediaMañana)
+                    handleCellClick(0, 'enAyunas', schedule[0].enAyunas)
                   }
                 >
-                  {editCell?.dayIdx === idx &&
-                  editCell?.field === 'mediaMañana' ? (
+                  {editCell?.dayIdx === 0 && editCell?.field === 'enAyunas' ? (
                     <input
                       type="text"
                       value={editValue}
@@ -429,104 +500,99 @@ export default function FeedingProgramPage() {
                       className="w-full px-2 py-1 border border-gray-400 rounded"
                     />
                   ) : (
-                    <p>{day.mediaMañana}</p>
+                    <p className="italic text-xs md:text-sm text-center">
+                      {schedule[0].enAyunas}
+                    </p>
                   )}
                 </td>
-              ))}
-            </tr>
+              </tr>
 
-            {/* MEDIA MAÑANA 9AM -11AM */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
-                MEDIA
-                <br />
-                MAÑANA
-                <br />
-                <span className="text-xs font-normal">9AM -11AM</span>
-              </td>
-              <td
-                colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
-                onClick={() =>
-                  handleCellClick(
-                    0,
-                    'mediaMañana9to11',
-                    schedule[0].mediaMañana9to11
-                  )
-                }
-              >
-                {editCell?.dayIdx === 0 &&
-                editCell?.field === 'mediaMañana9to11' ? (
-                  <input
-                    type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                    placeholder="Editar..."
-                    className="w-full px-2 py-1 border border-gray-400 rounded"
-                  />
-                ) : (
-                  <p className="italic text-xs md:text-sm text-center">
-                    {schedule[0].mediaMañana9to11}
-                  </p>
-                )}
-              </td>
-            </tr>
-
-            {/* ALMUERZO 12PM A 2PM */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
-                ALMUERZO
-                <br />
-                <span className="text-xs font-normal"></span>
-              </td>
-              <td
-                colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
-                onClick={() => handleCellClick(0, 'almuerzoInfo', almuerzoInfo)}
-              >
-                {editCell?.dayIdx === 0 &&
-                editCell?.field === 'almuerzoInfo' ? (
-                  <input
-                    type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                    placeholder="Editar..."
-                    className="w-full px-2 py-1 border border-gray-400 rounded"
-                  />
-                ) : (
-                  <p className="italic text-xs md:text-sm text-center">
-                    {almuerzoInfo}
-                  </p>
-                )}
-              </td>
-            </tr>
-
-            {/* ALMUERZO - Daily Recipes */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
-                12PM A<br />
-                2PM
-              </td>
-              {schedule.map((day, idx) => (
+              {/* DESAYUNO */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
+                  DESAYUNO
+                </td>
                 <td
-                  key={idx}
-                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                  colSpan={7}
+                  className="border border-gray-300 px-4 py-3 bg-green-200 text-gray-800 cursor-pointer hover:bg-green-300 transition"
+                  onClick={() =>
+                    handleCellClick(0, 'desayuno', schedule[0].desayuno)
+                  }
+                >
+                  {editCell?.dayIdx === 0 && editCell?.field === 'desayuno' ? (
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={handleSave}
+                      onKeyDown={handleKeyDown}
+                      autoFocus
+                      placeholder="Editar..."
+                      className="w-full px-2 py-1 border border-gray-400 rounded"
+                    />
+                  ) : (
+                    <p className="italic text-xs md:text-sm text-center">
+                      {schedule[0].desayuno}
+                    </p>
+                  )}
+                </td>
+              </tr>
+
+              {/* 6AM A 8AM - Daily Breakfast Details */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                  6AM A<br />
+                  8AM
+                </td>
+                {schedule.map((day, idx) => (
+                  <td
+                    key={idx}
+                    className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                    onClick={() =>
+                      handleCellClick(idx, 'mediaMañana', day.mediaMañana)
+                    }
+                  >
+                    {editCell?.dayIdx === idx &&
+                    editCell?.field === 'mediaMañana' ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={handleSave}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                        placeholder="Editar..."
+                        className="w-full px-2 py-1 border border-gray-400 rounded"
+                      />
+                    ) : (
+                      <p>{day.mediaMañana}</p>
+                    )}
+                  </td>
+                ))}
+              </tr>
+
+              {/* MEDIA MAÑANA 9AM -11AM */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                  MEDIA
+                  <br />
+                  MAÑANA
+                  <br />
+                  <span className="text-xs font-normal">9AM -11AM</span>
+                </td>
+                <td
+                  colSpan={7}
+                  className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
                   onClick={() =>
                     handleCellClick(
-                      idx,
-                      'almuerzo.recipes',
-                      day.almuerzo.recipes.join(' + ')
+                      0,
+                      'mediaMañana9to11',
+                      schedule[0].mediaMañana9to11
                     )
                   }
                 >
-                  {editCell?.dayIdx === idx &&
-                  editCell?.field === 'almuerzo.recipes' ? (
+                  {editCell?.dayIdx === 0 &&
+                  editCell?.field === 'mediaMañana9to11' ? (
                     <input
                       type="text"
                       value={editValue}
@@ -538,66 +604,29 @@ export default function FeedingProgramPage() {
                       className="w-full px-2 py-1 border border-gray-400 rounded"
                     />
                   ) : (
-                    <p>{day.almuerzo.recipes.join(' + ')}</p>
+                    <p className="italic text-xs md:text-sm text-center">
+                      {schedule[0].mediaMañana9to11}
+                    </p>
                   )}
                 </td>
-              ))}
-            </tr>
+              </tr>
 
-            {/* MEDIA TARDE 3 - 5PM */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
-                MEDIA
-                <br />
-                TARDE
-                <br />
-              </td>
-              <td
-                colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
-                onClick={() =>
-                  handleCellClick(0, 'mediaTardeInfo', mediaTardeInfo)
-                }
-              >
-                {editCell?.dayIdx === 0 &&
-                editCell?.field === 'mediaTardeInfo' ? (
-                  <input
-                    type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                    placeholder="Editar..."
-                    className="w-full px-2 py-1 border border-gray-400 rounded"
-                  />
-                ) : (
-                  <p className="italic text-xs md:text-sm text-center">
-                    {mediaTardeInfo}
-                  </p>
-                )}
-              </td>
-            </tr>
-
-            {/* MEDIA TARDE - Daily Items */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
-                <span className="text-xs font-normal">3 - 5PM</span>
-              </td>
-              {schedule.map((day, idx) => (
+              {/* ALMUERZO 12PM A 2PM */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                  ALMUERZO
+                  <br />
+                  <span className="text-xs font-normal"></span>
+                </td>
                 <td
-                  key={idx}
-                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                  colSpan={7}
+                  className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
                   onClick={() =>
-                    handleCellClick(
-                      idx,
-                      'mediaTarde.items',
-                      day.mediaTarde.items.join(' + ')
-                    )
+                    handleCellClick(0, 'almuerzoInfo', almuerzoInfo)
                   }
                 >
-                  {editCell?.dayIdx === idx &&
-                  editCell?.field === 'mediaTarde.items' ? (
+                  {editCell?.dayIdx === 0 &&
+                  editCell?.field === 'almuerzoInfo' ? (
                     <input
                       type="text"
                       value={editValue}
@@ -609,62 +638,67 @@ export default function FeedingProgramPage() {
                       className="w-full px-2 py-1 border border-gray-400 rounded"
                     />
                   ) : (
-                    <p>{day.mediaTarde.items.join(' + ')}</p>
+                    <p className="italic text-xs md:text-sm text-center">
+                      {almuerzoInfo}
+                    </p>
                   )}
                 </td>
-              ))}
-            </tr>
+              </tr>
 
-            {/* CENA */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
-                CENA
-                <br />
-              </td>
-              <td
-                colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
-                onClick={() => handleCellClick(0, 'cenaInfo', cenaInfo)}
-              >
-                {editCell?.dayIdx === 0 && editCell?.field === 'cenaInfo' ? (
-                  <input
-                    type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                    placeholder="Editar..."
-                    className="w-full px-2 py-1 border border-gray-400 rounded"
-                  />
-                ) : (
-                  <p className="italic text-xs md:text-sm text-center">
-                    {cenaInfo}
-                  </p>
-                )}
-              </td>
-            </tr>
+              {/* ALMUERZO - Daily Recipes */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
+                  12PM A<br />
+                  2PM
+                </td>
+                {schedule.map((day, idx) => (
+                  <td
+                    key={idx}
+                    className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                    onClick={() =>
+                      handleCellClick(
+                        idx,
+                        'almuerzo.recipes',
+                        day.almuerzo.recipes.join(' + ')
+                      )
+                    }
+                  >
+                    {editCell?.dayIdx === idx &&
+                    editCell?.field === 'almuerzo.recipes' ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={handleSave}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                        placeholder="Editar..."
+                        className="w-full px-2 py-1 border border-gray-400 rounded"
+                      />
+                    ) : (
+                      <p>{day.almuerzo.recipes.join(' + ')}</p>
+                    )}
+                  </td>
+                ))}
+              </tr>
 
-            {/* CENA - Daily Dinners 8:30 - 9 PM */}
-            <tr>
-              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
-                8:30 - 9<br />
-                PM
-              </td>
-              {schedule.map((day, idx) => (
+              {/* MEDIA TARDE 3 - 5PM */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                  MEDIA
+                  <br />
+                  TARDE
+                  <br />
+                </td>
                 <td
-                  key={idx}
-                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                  colSpan={7}
+                  className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
                   onClick={() =>
-                    handleCellClick(
-                      idx,
-                      'cena.description',
-                      day.cena.description
-                    )
+                    handleCellClick(0, 'mediaTardeInfo', mediaTardeInfo)
                   }
                 >
-                  {editCell?.dayIdx === idx &&
-                  editCell?.field === 'cena.description' ? (
+                  {editCell?.dayIdx === 0 &&
+                  editCell?.field === 'mediaTardeInfo' ? (
                     <input
                       type="text"
                       value={editValue}
@@ -676,13 +710,118 @@ export default function FeedingProgramPage() {
                       className="w-full px-2 py-1 border border-gray-400 rounded"
                     />
                   ) : (
-                    <p>{day.cena.description}</p>
+                    <p className="italic text-xs md:text-sm text-center">
+                      {mediaTardeInfo}
+                    </p>
                   )}
                 </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+              </tr>
+
+              {/* MEDIA TARDE - Daily Items */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
+                  <span className="text-xs font-normal">3 - 5PM</span>
+                </td>
+                {schedule.map((day, idx) => (
+                  <td
+                    key={idx}
+                    className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                    onClick={() =>
+                      handleCellClick(
+                        idx,
+                        'mediaTarde.items',
+                        day.mediaTarde.items.join(' + ')
+                      )
+                    }
+                  >
+                    {editCell?.dayIdx === idx &&
+                    editCell?.field === 'mediaTarde.items' ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={handleSave}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                        placeholder="Editar..."
+                        className="w-full px-2 py-1 border border-gray-400 rounded"
+                      />
+                    ) : (
+                      <p>{day.mediaTarde.items.join(' + ')}</p>
+                    )}
+                  </td>
+                ))}
+              </tr>
+
+              {/* CENA */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                  CENA
+                  <br />
+                </td>
+                <td
+                  colSpan={7}
+                  className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
+                  onClick={() => handleCellClick(0, 'cenaInfo', cenaInfo)}
+                >
+                  {editCell?.dayIdx === 0 && editCell?.field === 'cenaInfo' ? (
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={handleSave}
+                      onKeyDown={handleKeyDown}
+                      autoFocus
+                      placeholder="Editar..."
+                      className="w-full px-2 py-1 border border-gray-400 rounded"
+                    />
+                  ) : (
+                    <p className="italic text-xs md:text-sm text-center">
+                      {cenaInfo}
+                    </p>
+                  )}
+                </td>
+              </tr>
+
+              {/* CENA - Daily Dinners 8:30 - 9 PM */}
+              <tr>
+                <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                  8:30 - 9<br />
+                  PM
+                </td>
+                {schedule.map((day, idx) => (
+                  <td
+                    key={idx}
+                    className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                    onClick={() =>
+                      handleCellClick(
+                        idx,
+                        'cena.description',
+                        day.cena.description
+                      )
+                    }
+                  >
+                    {editCell?.dayIdx === idx &&
+                    editCell?.field === 'cena.description' ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={handleSave}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                        placeholder="Editar..."
+                        className="w-full px-2 py-1 border border-gray-400 rounded"
+                      />
+                    ) : (
+                      <p>{day.cena.description}</p>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
