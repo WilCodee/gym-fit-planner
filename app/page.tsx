@@ -382,10 +382,15 @@ export default function FeedingProgramPage() {
             border-collapse: collapse;
             background: white;
             font-size: 11px;
+            margin-top: 20px;
+            margin-bottom: 40px;
           }
           td, th {
             padding: 6px;
             border: 1px solid #333;
+          }
+          div {
+            margin-bottom: 30px;
           }
           @page {
             margin: 5px;
@@ -397,13 +402,17 @@ export default function FeedingProgramPage() {
               padding: 5px;
             }
             h3 {
-              margin: 0 0 5px 0;
+              margin: 50px 0 20px 0;
               padding: 0;
               page-break-after: avoid;
             }
             table {
               page-break-inside: avoid;
-              margin: 0;
+              margin: 0 0 40px 0;
+            }
+            div {
+              margin-bottom: 50px;
+              page-break-inside: avoid;
             }
             tr {
               page-break-inside: avoid;
