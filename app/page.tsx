@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Card from '@/app/components/Card'
 
 interface DaySchedule {
@@ -7,6 +8,7 @@ interface DaySchedule {
   enAyunas: string
   desayuno: string
   mediaMañana: string
+  mediaMañana9to11: string
   almuerzo: {
     time: string
     recipes: string[]
@@ -31,6 +33,8 @@ const weeklyFeedingProgram: DaySchedule[] = [
       'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
     mediaMañana:
       '1 vaso de jugo de piña con 2cdas de linaza (1tz de papaya, 250 ml) + 1 pan Pita integral + 90 g de pollo deshilachado',
+    mediaMañana9to11:
+      '8 almendras o 3 cdas de granola integral + ½ vaso de yogur griego natural',
     almuerzo: {
       time: '12PM A 2PM',
       recipes: [
@@ -57,6 +61,8 @@ const weeklyFeedingProgram: DaySchedule[] = [
       'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
     mediaMañana:
       '1 tz de infusión + 1 pan pita integral con ¼ de palta pequeña + 1 huevo sin yema',
+    mediaMañana9to11:
+      '8 almendras o 3 cdas de granola integral + ½ vaso de yogur griego natural',
     almuerzo: {
       time: '12PM A 2PM',
       recipes: [
@@ -83,6 +89,8 @@ const weeklyFeedingProgram: DaySchedule[] = [
       'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
     mediaMañana:
       '1 vaso de jugo de papaya con 2cdas de linaza (1tz de papaya, 250 ml agua) + 1 pan pita integral con 1 rodaja de queso fresco',
+    mediaMañana9to11:
+      '8 almendras o 3 cdas de granola integral + ½ vaso de yogur griego natural',
     almuerzo: {
       time: '12PM A 2PM',
       recipes: [
@@ -109,6 +117,8 @@ const weeklyFeedingProgram: DaySchedule[] = [
       'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
     mediaMañana:
       '1 Taza de avena bebible (250 ml) + 1 pan pita integral + 90 g de pollo deshilachado + 1 tz de piña',
+    mediaMañana9to11:
+      '8 almendras o 3 cdas de granola integral + ½ vaso de yogur griego natural',
     almuerzo: {
       time: '12PM A 2PM',
       recipes: [
@@ -135,6 +145,8 @@ const weeklyFeedingProgram: DaySchedule[] = [
       'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
     mediaMañana:
       '1 vaso de jugo verde (1 manzana verde, 1 tz de piña, 6 hojas de espinaca, ½ tz de pepino, 2 hojas de perejil, 3 ramos de apio) + 2 huevos sin yema',
+    mediaMañana9to11:
+      '8 almendras o 3 cdas de granola integral + ½ vaso de yogur griego natural',
     almuerzo: {
       time: '12PM A 2PM',
       recipes: [
@@ -161,6 +173,8 @@ const weeklyFeedingProgram: DaySchedule[] = [
       'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
     mediaMañana:
       '1 tz de té de manzanilla 250 ml + Panqueques de avena (1/2 tz de avena, 1 plátano, 1huevo, 1 cdta canela, 150 ml leche deslactosada) + Topping: 1 plátano o 6 fresas con 3 tz arándanos',
+    mediaMañana9to11:
+      '8 almendras o 3 cdas de granola integral + ½ vaso de yogur griego natural',
     almuerzo: {
       time: '12PM A 2PM',
       recipes: [
@@ -187,6 +201,8 @@ const weeklyFeedingProgram: DaySchedule[] = [
       'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
     mediaMañana:
       '1 tz de café 250 ml + Panqueques de avena (1/2 tz de avena, 1 plátano, 1huevo, 1 cdta canela, 150 ml leche deslactosada) + Topping: 3 fresas con 1/3 tz arándanos',
+    mediaMañana9to11:
+      '8 almendras o 3 cdas de granola integral + ½ vaso de yogur griego natural',
     almuerzo: {
       time: '12PM A 2PM',
       recipes: ['ALMUERZO LIBRE'],
@@ -206,6 +222,80 @@ const weeklyFeedingProgram: DaySchedule[] = [
 ]
 
 export default function FeedingProgramPage() {
+  const [schedule, setSchedule] = useState(weeklyFeedingProgram)
+  const [editCell, setEditCell] = useState<{
+    dayIdx: number
+    field: string
+  } | null>(null)
+  const [editValue, setEditValue] = useState('')
+  const [almuerzoInfo, setAlmuerzoInfo] = useState(
+    'Consumir dos vasos de agua antes'
+  )
+  const [mediaTardeInfo, setMediaTardeInfo] = useState(
+    'Consumir dos vasos de agua'
+  )
+  const [cenaInfo, setCenaInfo] = useState(
+    '¡OJO! Optar siempre por un alimento proteico (pollo, pescado, pavita o 4 claras de huevos) + 1 1/2 taza de verduras cocidas o crudas'
+  )
+
+  const handleCellClick = (
+    dayIdx: number,
+    field: string,
+    currentValue: string
+  ) => {
+    setEditCell({ dayIdx, field })
+    setEditValue(currentValue)
+  }
+
+  const handleSave = () => {
+    if (!editCell) return
+
+    const newSchedule = [...schedule]
+    const { dayIdx, field } = editCell
+
+    if (field === 'enAyunas') {
+      newSchedule[dayIdx].enAyunas = editValue
+    } else if (field === 'desayuno') {
+      newSchedule[dayIdx].desayuno = editValue
+    } else if (field === 'mediaMañana') {
+      newSchedule[dayIdx].mediaMañana = editValue
+    } else if (field === 'mediaMañana9to11') {
+      newSchedule[dayIdx].mediaMañana9to11 = editValue
+    } else if (field.startsWith('almuerzo.')) {
+      const subField = field.split('.')[1]
+      if (subField === 'recipes') {
+        newSchedule[dayIdx].almuerzo.recipes = [editValue]
+      }
+    } else if (field.startsWith('mediaTarde.')) {
+      const subField = field.split('.')[1]
+      if (subField === 'items') {
+        newSchedule[dayIdx].mediaTarde.items = [editValue]
+      }
+    } else if (field.startsWith('cena.')) {
+      const subField = field.split('.')[1]
+      if (subField === 'description') {
+        newSchedule[dayIdx].cena.description = editValue
+      }
+    } else if (field === 'almuerzoInfo') {
+      setAlmuerzoInfo(editValue)
+    } else if (field === 'mediaTardeInfo') {
+      setMediaTardeInfo(editValue)
+    } else if (field === 'cenaInfo') {
+      setCenaInfo(editValue)
+    }
+
+    setSchedule(newSchedule)
+    setEditCell(null)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSave()
+    } else if (e.key === 'Escape') {
+      setEditCell(null)
+    }
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-8">
@@ -257,11 +347,27 @@ export default function FeedingProgramPage() {
               </td>
               <td
                 colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
+                onClick={() =>
+                  handleCellClick(0, 'enAyunas', schedule[0].enAyunas)
+                }
               >
-                <p className="italic text-xs md:text-sm">
-                  {weeklyFeedingProgram[0].enAyunas}
-                </p>
+                {editCell?.dayIdx === 0 && editCell?.field === 'enAyunas' ? (
+                  <input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    placeholder="Editar..."
+                    className="w-full px-2 py-1 border border-gray-400 rounded"
+                  />
+                ) : (
+                  <p className="italic text-xs md:text-sm text-center">
+                    {schedule[0].enAyunas}
+                  </p>
+                )}
               </td>
             </tr>
 
@@ -272,11 +378,27 @@ export default function FeedingProgramPage() {
               </td>
               <td
                 colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-green-200 text-gray-800"
+                className="border border-gray-300 px-4 py-3 bg-green-200 text-gray-800 cursor-pointer hover:bg-green-300 transition"
+                onClick={() =>
+                  handleCellClick(0, 'desayuno', schedule[0].desayuno)
+                }
               >
-                <p className="italic text-xs md:text-sm">
-                  {weeklyFeedingProgram[0].desayuno}
-                </p>
+                {editCell?.dayIdx === 0 && editCell?.field === 'desayuno' ? (
+                  <input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    placeholder="Editar..."
+                    className="w-full px-2 py-1 border border-gray-400 rounded"
+                  />
+                ) : (
+                  <p className="italic text-xs md:text-sm text-center">
+                    {schedule[0].desayuno}
+                  </p>
+                )}
               </td>
             </tr>
 
@@ -286,12 +408,29 @@ export default function FeedingProgramPage() {
                 6AM A<br />
                 8AM
               </td>
-              {weeklyFeedingProgram.map((day, idx) => (
+              {schedule.map((day, idx) => (
                 <td
                   key={idx}
-                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top"
+                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                  onClick={() =>
+                    handleCellClick(idx, 'mediaMañana', day.mediaMañana)
+                  }
                 >
-                  <p>{day.mediaMañana}</p>
+                  {editCell?.dayIdx === idx &&
+                  editCell?.field === 'mediaMañana' ? (
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={handleSave}
+                      onKeyDown={handleKeyDown}
+                      autoFocus
+                      placeholder="Editar..."
+                      className="w-full px-2 py-1 border border-gray-400 rounded"
+                    />
+                  ) : (
+                    <p>{day.mediaMañana}</p>
+                  )}
                 </td>
               ))}
             </tr>
@@ -307,12 +446,32 @@ export default function FeedingProgramPage() {
               </td>
               <td
                 colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
+                onClick={() =>
+                  handleCellClick(
+                    0,
+                    'mediaMañana9to11',
+                    schedule[0].mediaMañana9to11
+                  )
+                }
               >
-                <p className="italic text-xs md:text-sm">
-                  8 almendras o 3 cdas de granola integral + ½ vaso de yogur
-                  griego natural
-                </p>
+                {editCell?.dayIdx === 0 &&
+                editCell?.field === 'mediaMañana9to11' ? (
+                  <input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    placeholder="Editar..."
+                    className="w-full px-2 py-1 border border-gray-400 rounded"
+                  />
+                ) : (
+                  <p className="italic text-xs md:text-sm text-center">
+                    {schedule[0].mediaMañana9to11}
+                  </p>
+                )}
               </td>
             </tr>
 
@@ -325,11 +484,26 @@ export default function FeedingProgramPage() {
               </td>
               <td
                 colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
+                onClick={() => handleCellClick(0, 'almuerzoInfo', almuerzoInfo)}
               >
-                <p className="italic text-xs md:text-sm text-center">
-                  Consumir dos vasos de agua antes
-                </p>
+                {editCell?.dayIdx === 0 &&
+                editCell?.field === 'almuerzoInfo' ? (
+                  <input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    placeholder="Editar..."
+                    className="w-full px-2 py-1 border border-gray-400 rounded"
+                  />
+                ) : (
+                  <p className="italic text-xs md:text-sm text-center">
+                    {almuerzoInfo}
+                  </p>
+                )}
               </td>
             </tr>
 
@@ -339,12 +513,33 @@ export default function FeedingProgramPage() {
                 12PM A<br />
                 2PM
               </td>
-              {weeklyFeedingProgram.map((day, idx) => (
+              {schedule.map((day, idx) => (
                 <td
                   key={idx}
-                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top"
+                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                  onClick={() =>
+                    handleCellClick(
+                      idx,
+                      'almuerzo.recipes',
+                      day.almuerzo.recipes.join(' + ')
+                    )
+                  }
                 >
-                  <p>{day.almuerzo.recipes.join(' + ')}</p>
+                  {editCell?.dayIdx === idx &&
+                  editCell?.field === 'almuerzo.recipes' ? (
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={handleSave}
+                      onKeyDown={handleKeyDown}
+                      autoFocus
+                      placeholder="Editar..."
+                      className="w-full px-2 py-1 border border-gray-400 rounded"
+                    />
+                  ) : (
+                    <p>{day.almuerzo.recipes.join(' + ')}</p>
+                  )}
                 </td>
               ))}
             </tr>
@@ -359,11 +554,28 @@ export default function FeedingProgramPage() {
               </td>
               <td
                 colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
+                onClick={() =>
+                  handleCellClick(0, 'mediaTardeInfo', mediaTardeInfo)
+                }
               >
-                <p className="italic text-xs md:text-sm text-center">
-                  Consumir dos vasos de agua
-                </p>
+                {editCell?.dayIdx === 0 &&
+                editCell?.field === 'mediaTardeInfo' ? (
+                  <input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    placeholder="Editar..."
+                    className="w-full px-2 py-1 border border-gray-400 rounded"
+                  />
+                ) : (
+                  <p className="italic text-xs md:text-sm text-center">
+                    {mediaTardeInfo}
+                  </p>
+                )}
               </td>
             </tr>
 
@@ -372,12 +584,33 @@ export default function FeedingProgramPage() {
               <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
                 <span className="text-xs font-normal">3 - 5PM</span>
               </td>
-              {weeklyFeedingProgram.map((day, idx) => (
+              {schedule.map((day, idx) => (
                 <td
                   key={idx}
-                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top"
+                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                  onClick={() =>
+                    handleCellClick(
+                      idx,
+                      'mediaTarde.items',
+                      day.mediaTarde.items.join(' + ')
+                    )
+                  }
                 >
-                  <p>{day.mediaTarde.items.join(' + ')}</p>
+                  {editCell?.dayIdx === idx &&
+                  editCell?.field === 'mediaTarde.items' ? (
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={handleSave}
+                      onKeyDown={handleKeyDown}
+                      autoFocus
+                      placeholder="Editar..."
+                      className="w-full px-2 py-1 border border-gray-400 rounded"
+                    />
+                  ) : (
+                    <p>{day.mediaTarde.items.join(' + ')}</p>
+                  )}
                 </td>
               ))}
             </tr>
@@ -390,13 +623,25 @@ export default function FeedingProgramPage() {
               </td>
               <td
                 colSpan={7}
-                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800 cursor-pointer hover:bg-blue-300 transition"
+                onClick={() => handleCellClick(0, 'cenaInfo', cenaInfo)}
               >
-                <p className="italic text-xs md:text-sm text-center">
-                  ¡OJO! Optar siempre por un alimento proteico (pollo, pescado,
-                  pavita o 4 claras de huevos) + 1 1/2 taza de verduras cocidas
-                  o crudas
-                </p>
+                {editCell?.dayIdx === 0 && editCell?.field === 'cenaInfo' ? (
+                  <input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    placeholder="Editar..."
+                    className="w-full px-2 py-1 border border-gray-400 rounded"
+                  />
+                ) : (
+                  <p className="italic text-xs md:text-sm text-center">
+                    {cenaInfo}
+                  </p>
+                )}
               </td>
             </tr>
 
@@ -406,19 +651,39 @@ export default function FeedingProgramPage() {
                 8:30 - 9<br />
                 PM
               </td>
-              {weeklyFeedingProgram.map((day, idx) => (
+              {schedule.map((day, idx) => (
                 <td
                   key={idx}
-                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top"
+                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top cursor-pointer hover:bg-blue-300 transition"
+                  onClick={() =>
+                    handleCellClick(
+                      idx,
+                      'cena.description',
+                      day.cena.description
+                    )
+                  }
                 >
-                  <p>{day.cena.description}</p>
+                  {editCell?.dayIdx === idx &&
+                  editCell?.field === 'cena.description' ? (
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={handleSave}
+                      onKeyDown={handleKeyDown}
+                      autoFocus
+                      placeholder="Editar..."
+                      className="w-full px-2 py-1 border border-gray-400 rounded"
+                    />
+                  ) : (
+                    <p>{day.cena.description}</p>
+                  )}
                 </td>
               ))}
             </tr>
           </tbody>
         </table>
       </div>
-
     </div>
   )
 }
