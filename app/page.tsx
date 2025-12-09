@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import styles from './table-styles.module.css'
 
 interface DaySchedule {
@@ -454,7 +455,6 @@ export default function FeedingProgramPage() {
           DIETA PÉRDIDA DE GRASA
         </h3>
 
-        {/* Weekly Feeding Table */}
         <div
           ref={tableRef}
           className="overflow-x-auto bg-white rounded-lg shadow-lg"
@@ -821,6 +821,37 @@ export default function FeedingProgramPage() {
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <div className="text-center mb-6">
+          <Image
+            src="/nutrition-hero.png"
+            alt="Nutrición y fitness"
+            width={1200}
+            height={400}
+            className="w-full h-auto max-w-4xl mx-auto"
+            priority
+          />
+        </div>
+        <div className="text-center mb-6">
+          <Image
+            src="/plate.png"
+            alt="Nutrición y fitness"
+            width={1200}
+            height={800}
+            // className="w-full h-auto max-w-4xl mx-auto"
+            priority
+          />
+        </div>
+        <div className="text-center mb-6">
+          <Image
+            src="/feedback.png"
+            alt="Nutrición y fitness"
+            width={1000}
+            height={400}
+            // className="w-full h-auto max-w-3xl mx-auto"
+            priority
+          />
         </div>
       </div>
     </div>
