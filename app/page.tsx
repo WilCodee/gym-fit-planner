@@ -1,65 +1,424 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import Card from '@/app/components/Card'
+
+interface DaySchedule {
+  day: string
+  enAyunas: string
+  desayuno: string
+  mediaMañana: string
+  almuerzo: {
+    time: string
+    recipes: string[]
+  }
+  mediaTarde: {
+    time: string
+    items: string[]
+  }
+  cena: {
+    time: string
+    description: string
+    notes: string
+  }
+}
+
+const weeklyFeedingProgram: DaySchedule[] = [
+  {
+    day: 'DÍA 01',
+    enAyunas:
+      '1 vaso de agua tibia con 2cdas de linaza - todos los días (remojar una noche antes)',
+    desayuno:
+      'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
+    mediaMañana:
+      '1 vaso de jugo de piña con 2cdas de linaza (1tz de papaya, 250 ml) + 1 pan Pita integral + 90 g de pollo deshilachado',
+    almuerzo: {
+      time: '12PM A 2PM',
+      recipes: [
+        'Guiso de pollo a la olla (150 g) (2 tazas de verdura cocidas: brócoli, choclo, vainitay zanahoria) con limón y pizza de sal con Guarnición: 1/2 tz de lentejas limonada sin azúcar',
+      ],
+    },
+    mediaTarde: {
+      time: '3 - 5PM',
+      items: ['2 mandarinas'],
+    },
+    cena: {
+      time: '8:30 - 9 PM',
+      description:
+        'Guiso de pollo a la olla (150 g) (2 tazas de verdura cocidas: brócoli, choclo, vainitay zanahoria) con limón y pizza de sal con 1 taza de té de manzanilla y Gelatina light',
+      notes:
+        'Cenar 2 horas antes de dormir y después de entrenar, en caso entrenes en la noche',
+    },
+  },
+  {
+    day: 'DÍA 02',
+    enAyunas:
+      '1 vaso de agua tibia con 2cdas de linaza - todos los días (remojar una noche antes)',
+    desayuno:
+      'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
+    mediaMañana:
+      '1 tz de infusión + 1 pan pita integral con ¼ de palta pequeña + 1 huevo sin yema',
+    almuerzo: {
+      time: '12PM A 2PM',
+      recipes: [
+        'Pescado a la plancha – 150 gr y 2tz verduras frescas (lechuga, pepino, tomate) con Guarnición: 1 papa cocida de 120g + 500 ml de naranjada sin azúcar',
+      ],
+    },
+    mediaTarde: {
+      time: '3 - 5PM',
+      items: ['1 manzana verde'],
+    },
+    cena: {
+      time: '8:30 - 9 PM',
+      description:
+        '½ choclo cocido + 90 g de atún en agua + 1 tz lechuga, zanahoria, pepino + 1 cda aceite de oliva + 1 vaso refresco sin azúcar y Gelatina light',
+      notes:
+        'Cenar 2 horas antes de dormir y después de entrenar, en caso entrenes en la noche',
+    },
+  },
+  {
+    day: 'DÍA 03',
+    enAyunas:
+      '1 vaso de agua tibia con 2cdas de linaza - todos los días (remojar una noche antes)',
+    desayuno:
+      'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
+    mediaMañana:
+      '1 vaso de jugo de papaya con 2cdas de linaza (1tz de papaya, 250 ml agua) + 1 pan pita integral con 1 rodaja de queso fresco',
+    almuerzo: {
+      time: '12PM A 2PM',
+      recipes: [
+        '3 taza de Ensalada fresca de espinaca, cebolla blanca y tomate + Croquetas de atún: ½ tz avena + 1 lata de atún + 2 huevos + cebolla picada + pizza de sal (revolver y al sartén) con 500 ml de limonada sin azúcar',
+      ],
+    },
+    mediaTarde: {
+      time: '3 - 5PM',
+      items: ['2 mandarinas'],
+    },
+    cena: {
+      time: '8:30 - 9 PM',
+      description:
+        'SANDWICH DE POLLO con 1 pan pita integral + 90 gr de pollo desmenuzado + tomate/ Lechuga +1 taza de infusión de anís y 1 porción de fruta y Gelatina light',
+      notes:
+        'Cenar 2 horas antes de dormir y después de entrenar, en caso entrenes en la noche',
+    },
+  },
+  {
+    day: 'DÍA 04',
+    enAyunas:
+      '1 vaso de agua tibia con 2cdas de linaza - todos los días (remojar una noche antes)',
+    desayuno:
+      'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
+    mediaMañana:
+      '1 Taza de avena bebible (250 ml) + 1 pan pita integral + 90 g de pollo deshilachado + 1 tz de piña',
+    almuerzo: {
+      time: '12PM A 2PM',
+      recipes: [
+        'Estofado de pollo (150 g) y 2tz verduras frescas (lechuga, pepino, tomate) con Guarnición: 1 papas amarilla pequeña limonada sin azúcar',
+      ],
+    },
+    mediaTarde: {
+      time: '3 - 5PM',
+      items: ['3 cucharadas de granola NATURAL'],
+    },
+    cena: {
+      time: '8:30 - 9 PM',
+      description:
+        '½ choclo cocido + 90 g de atún en agua + 1 tz lechuga, zanahoria, pepino + 1 cda aceite de oliva + 1 vaso refresco sin azúcar y Gelatina light',
+      notes:
+        'Cenar 2 horas antes de dormir y después de entrenar, en caso entrenes en la noche',
+    },
+  },
+  {
+    day: 'DÍA 05',
+    enAyunas:
+      '1 vaso de agua tibia con 2cdas de linaza - todos los días (remojar una noche antes)',
+    desayuno:
+      'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
+    mediaMañana:
+      '1 vaso de jugo verde (1 manzana verde, 1 tz de piña, 6 hojas de espinaca, ½ tz de pepino, 2 hojas de perejil, 3 ramos de apio) + 2 huevos sin yema',
+    almuerzo: {
+      time: '12PM A 2PM',
+      recipes: [
+        'Pavita a la plancha – 150 gr y 2tz verduras frescas (lechuga, pepino, tomate) con Guarnición: 1 camote pequeño de 120g + 500 ml de naranjada sin azúcar',
+      ],
+    },
+    mediaTarde: {
+      time: '3 - 5PM',
+      items: ['8 almendras'],
+    },
+    cena: {
+      time: '8:30 - 9 PM',
+      description:
+        'SANDWICH DE POLLO con 1 pan pita integral + 90 gr de pollo desmenuzado + tomate/ Lechuga +1 taza de infusión de anís y 1 tz de piña y Gelatina light',
+      notes:
+        'Cenar 2 horas antes de dormir y después de entrenar, en caso entrenes en la noche',
+    },
+  },
+  {
+    day: 'DÍA 06',
+    enAyunas:
+      '1 vaso de agua tibia con 2cdas de linaza - todos los días (remojar una noche antes)',
+    desayuno:
+      'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
+    mediaMañana:
+      '1 tz de té de manzanilla 250 ml + Panqueques de avena (1/2 tz de avena, 1 plátano, 1huevo, 1 cdta canela, 150 ml leche deslactosada) + Topping: 1 plátano o 6 fresas con 3 tz arándanos',
+    almuerzo: {
+      time: '12PM A 2PM',
+      recipes: [
+        'Salteado de verduras con trozos de pollo (120 g de pollo, tamaño: palma de mano en trozos), (verduras: brócoli, tomate, vainaita, cebolla) + 1 unidad de papa sancochada + ¼ de palta',
+      ],
+    },
+    mediaTarde: {
+      time: '3 - 5PM',
+      items: ['Yogur Skyr + tz de piña picada'],
+    },
+    cena: {
+      time: '8:30 - 9 PM',
+      description:
+        '¡OJO! Optar siempre por un alimento proteico (pollo, pescado, pavita o 4 claras de huevos) + 1 1/2 taza de verduras cocidas o crudas, el acompañamiento puede ser: 1 papa sancochada, arroz integral, 1 choclo, 1 camote o 2 tostadas integrales',
+      notes:
+        'Cenar 2 horas antes de dormir y después de entrenar, en caso entrenes en la noche',
+    },
+  },
+  {
+    day: 'DÍA 07',
+    enAyunas:
+      '1 vaso de agua tibia con 2cdas de linaza - todos los días (remojar una noche antes)',
+    desayuno:
+      'En caso entrenar entre las 5 am y 8am, solo consumir 1 fruta pre entrenó',
+    mediaMañana:
+      '1 tz de café 250 ml + Panqueques de avena (1/2 tz de avena, 1 plátano, 1huevo, 1 cdta canela, 150 ml leche deslactosada) + Topping: 3 fresas con 1/3 tz arándanos',
+    almuerzo: {
+      time: '12PM A 2PM',
+      recipes: ['ALMUERZO LIBRE'],
+    },
+    mediaTarde: {
+      time: '3 - 5PM',
+      items: ['Yogur Skyr + ½ tz arándanos'],
+    },
+    cena: {
+      time: '8:30 - 9 PM',
+      description:
+        '¡OJO! Optar siempre por un alimento proteico (pollo, pescado, pavita o 4 claras de huevos) + 1 1/2 taza de verduras cocidas o crudas, el acompañamiento puede ser: 1 papa sancochada, arroz integral, 1 choclo, 1 camote o 2 tostadas integrales',
+      notes:
+        'Cenar 2 horas antes de dormir y después de entrenar, en caso entrenes en la noche',
+    },
+  },
+]
+
+export default function FeedingProgramPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          🍽️ Plan de Alimentación Semanal
+        </h1>
+        <p className="text-lg text-gray-600">
+          Programa completo de nutrición para 7 días
+        </p>
+      </div>
+
+      {/* Weekly Feeding Table */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
+        <table className="w-full border-collapse text-sm">
+          {/* Header */}
+          <thead>
+            <tr className="bg-green-600 text-white">
+              <th className="border border-green-700 px-4 py-3 text-left font-bold w-20"></th>
+              <th className="border border-green-700 px-4 py-3 text-center font-bold">
+                DÍA 01
+              </th>
+              <th className="border border-green-700 px-4 py-3 text-center font-bold">
+                DÍA 02
+              </th>
+              <th className="border border-green-700 px-4 py-3 text-center font-bold">
+                DÍA 03
+              </th>
+              <th className="border border-green-700 px-4 py-3 text-center font-bold">
+                DÍA 04
+              </th>
+              <th className="border border-green-700 px-4 py-3 text-center font-bold">
+                DÍA 05
+              </th>
+              <th className="border border-green-700 px-4 py-3 text-center font-bold">
+                DÍA 06
+              </th>
+              <th className="border border-green-700 px-4 py-3 text-center font-bold">
+                DÍA 07
+              </th>
+            </tr>
+          </thead>
+
+          {/* Body */}
+          <tbody>
+            {/* EN AYUNAS */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
+                EN AYUNAS
+              </td>
+              <td
+                colSpan={7}
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+              >
+                <p className="italic text-xs md:text-sm">
+                  {weeklyFeedingProgram[0].enAyunas}
+                </p>
+              </td>
+            </tr>
+
+            {/* DESAYUNO */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
+                DESAYUNO
+              </td>
+              <td
+                colSpan={7}
+                className="border border-gray-300 px-4 py-3 bg-green-200 text-gray-800"
+              >
+                <p className="italic text-xs md:text-sm">
+                  {weeklyFeedingProgram[0].desayuno}
+                </p>
+              </td>
+            </tr>
+
+            {/* 6AM A 8AM - Daily Breakfast Details */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                6AM A<br />
+                8AM
+              </td>
+              {weeklyFeedingProgram.map((day, idx) => (
+                <td
+                  key={idx}
+                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top"
+                >
+                  <p>{day.mediaMañana}</p>
+                </td>
+              ))}
+            </tr>
+
+            {/* MEDIA MAÑANA 9AM -11AM */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                MEDIA
+                <br />
+                MAÑANA
+                <br />
+                <span className="text-xs font-normal">9AM -11AM</span>
+              </td>
+              <td
+                colSpan={7}
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+              >
+                <p className="italic text-xs md:text-sm">
+                  8 almendras o 3 cdas de granola integral + ½ vaso de yogur
+                  griego natural
+                </p>
+              </td>
+            </tr>
+
+            {/* ALMUERZO 12PM A 2PM */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                ALMUERZO
+                <br />
+                <span className="text-xs font-normal"></span>
+              </td>
+              <td
+                colSpan={7}
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+              >
+                <p className="italic text-xs md:text-sm text-center">
+                  Consumir dos vasos de agua antes
+                </p>
+              </td>
+            </tr>
+
+            {/* ALMUERZO - Daily Recipes */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
+                12PM A<br />
+                2PM
+              </td>
+              {weeklyFeedingProgram.map((day, idx) => (
+                <td
+                  key={idx}
+                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top"
+                >
+                  <p>{day.almuerzo.recipes.join(' + ')}</p>
+                </td>
+              ))}
+            </tr>
+
+            {/* MEDIA TARDE 3 - 5PM */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                MEDIA
+                <br />
+                TARDE
+                <br />
+              </td>
+              <td
+                colSpan={7}
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+              >
+                <p className="italic text-xs md:text-sm text-center">
+                  Consumir dos vasos de agua
+                </p>
+              </td>
+            </tr>
+
+            {/* MEDIA TARDE - Daily Items */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white">
+                <span className="text-xs font-normal">3 - 5PM</span>
+              </td>
+              {weeklyFeedingProgram.map((day, idx) => (
+                <td
+                  key={idx}
+                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top"
+                >
+                  <p>{day.mediaTarde.items.join(' + ')}</p>
+                </td>
+              ))}
+            </tr>
+
+            {/* CENA */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                CENA
+                <br />
+              </td>
+              <td
+                colSpan={7}
+                className="border border-gray-300 px-4 py-3 bg-blue-200 text-gray-800"
+              >
+                <p className="italic text-xs md:text-sm text-center">
+                  ¡OJO! Optar siempre por un alimento proteico (pollo, pescado,
+                  pavita o 4 claras de huevos) + 1 1/2 taza de verduras cocidas
+                  o crudas
+                </p>
+              </td>
+            </tr>
+
+            {/* CENA - Daily Dinners 8:30 - 9 PM */}
+            <tr>
+              <td className="border border-gray-300 px-4 py-3 font-bold bg-green-500 text-white text-xs md:text-sm">
+                8:30 - 9<br />
+                PM
+              </td>
+              {weeklyFeedingProgram.map((day, idx) => (
+                <td
+                  key={idx}
+                  className="border border-gray-300 px-3 py-3 bg-blue-200 text-gray-800 text-xs align-top"
+                >
+                  <p>{day.cena.description}</p>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
-  );
+  )
 }
