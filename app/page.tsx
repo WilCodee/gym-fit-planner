@@ -848,7 +848,7 @@ export default function FeedingProgramPage() {
             alt="Nutrición y fitness"
             width={1200}
             height={800}
-            // className="w-full h-auto max-w-4xl mx-auto"
+            className="mx-auto"
             priority
           />
         </div>
@@ -857,8 +857,18 @@ export default function FeedingProgramPage() {
             src="/feedback.png"
             alt="Nutrición y fitness"
             width={1000}
+            height={380}
+            className="mx-auto"
+            priority
+          />
+        </div>
+        <div className="text-center mb-6">
+          <Image
+            src="/logo.png"
+            alt="Nutrición y fitness"
+            width={500}
             height={400}
-            // className="w-full h-auto max-w-3xl mx-auto"
+            className="mx-auto"
             priority
           />
         </div>

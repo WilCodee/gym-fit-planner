@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 
 export default function Header() {
@@ -12,9 +13,9 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           <Link
             href="/"
-            className="text-2xl font-bold hover:text-blue-100 transition"
+            className="flex items-center gap-2 hover:opacity-80 transition"
           >
-            🍽️ Feeding Planner
+            <span className="text-2xl font-bold">El cardio es vida</span>
           </Link>
 
           {/* Desktop Menu */}
